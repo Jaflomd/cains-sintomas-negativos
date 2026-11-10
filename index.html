@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CAINS · Síntomas negativos</title>
+<style>
+:root{
+  --bg:#eef2f4; --card:#ffffff; --ink:#14232c; --muted:#5a6b75; --line:#d7e0e5; --soft:#f5f8f9;
+  --brand:#0b4f6c; --brand-ink:#ffffff; --brand-2:#b3202e; --accent:#0b6e8f; --accent-soft:#e1eff4;
+  --warn:#8a5a00; --warn-soft:#fdf3df; --ok:#2e7d4f;
+  --s0:#2e7d4f; --s1:#8a8f12; --s2:#c46a17; --s3:#b3202e; --s4:#6d1530;
+  --shadow:0 1px 2px rgba(10,40,55,.06),0 4px 14px rgba(10,40,55,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f171c; --card:#172229; --ink:#e6edf1; --muted:#9aaab3; --line:#2a3a43; --soft:#1b2830;
+    --brand:#0d3e55; --accent:#58b4d6; --accent-soft:#16323f; --warn:#e7b65c; --warn-soft:#2d2513;
+    --s4:#9a2a4a; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f171c; --card:#172229; --ink:#e6edf1; --muted:#9aaab3; --line:#2a3a43; --soft:#1b2830;
+  --brand:#0d3e55; --accent:#58b4d6; --accent-soft:#16323f; --warn:#e7b65c; --warn-soft:#2d2513;
+  --s4:#9a2a4a; --shadow:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;transition:background .12s,border-color .12s,transform .05s}
+button:hover{border-color:var(--accent)}
+button:active{transform:scale(.98)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+button.ghost{background:transparent}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+input,select,textarea{font:inherit;color:inherit;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%}
+textarea{min-height:64px;resize:vertical}
+label.f{display:block;font-size:13px;font-weight:600;color:var(--muted)}
+label.f>input,label.f>select{margin-top:4px;font-weight:400;color:var(--ink)}
+
+.inst{background:var(--brand);color:var(--brand-ink);border-bottom:4px solid var(--brand-2)}
+.inst .in{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.seal{flex:0 0 42px;height:42px;border-radius:50%;border:2px solid rgba(255,255,255,.8);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;letter-spacing:.3px}
+.inst .t1{font-weight:700;font-size:16px;line-height:1.2}
+.inst .t2{font-size:13px;opacity:.85}
+.inst .tool{margin-left:auto;text-align:right;font-size:13px;opacity:.9;line-height:1.25}
+.inst .tool b{display:block;font-size:15px;opacity:1}
+@media (max-width:560px){.inst .tool{display:none}}
+
+.status{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.status .in{max-width:1180px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:13px;font-weight:600}
+.prog{flex:1 1 140px;min-width:120px}
+.prog .bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.prog .bar i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.prog small{color:var(--muted);font-size:12px}
+.tot{font-variant-numeric:tabular-nums;font-weight:800;font-size:16px;white-space:nowrap}
+.tot small{font-weight:600;color:var(--muted);font-size:12px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:none;border-radius:0;padding:6px 12px;font-size:14px;background:var(--card)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--accent);color:#fff}
+.saved{font-size:12px;color:var(--ok);opacity:0;transition:opacity .3s}
+.saved.show{opacity:1}
+
+.layout{max-width:1180px;margin:0 auto;padding:16px;display:grid;grid-template-columns:250px 1fr;gap:18px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:1fr}.side{display:none}}
+.side{position:sticky;top:70px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px;box-shadow:var(--shadow)}
+.side .st{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:none;background:transparent;padding:8px 10px;border-radius:8px;font-size:14px}
+.side .st.on{background:var(--accent-soft);font-weight:700}
+.side .st .sub{margin-left:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.side .dots{display:flex;gap:4px;padding:0 10px 8px 34px;flex-wrap:wrap}
+.side .dots button{width:24px;height:22px;padding:0;border-radius:6px;font-size:11px;line-height:20px;font-variant-numeric:tabular-nums}
+.side .dots button.cur{outline:2px solid var(--accent);outline-offset:1px}
+.side .sep{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:700;padding:8px 10px 2px}
+.num{flex:0 0 20px;height:20px;border-radius:50%;background:var(--line);font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.num.done{background:var(--ok);color:#fff}
+.mtabs{display:none;gap:6px;overflow-x:auto;padding:10px 16px 0;max-width:1180px;margin:0 auto}
+.mtabs button{flex:0 0 auto;font-size:14px;padding:6px 10px}
+.mtabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+@media (max-width:900px){.mtabs{display:flex}}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+.eyebrow{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;font-weight:700}
+h2{margin:4px 0 6px;font-size:23px;line-height:1.25}
+h3{margin:0 0 10px;font-size:17px}
+.what{color:var(--muted);margin:0 0 14px}
+.lbl{font-size:12px;font-weight:700;color:var(--muted);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.6px}
+.per{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin-left:6px;vertical-align:middle;text-transform:none;letter-spacing:0}
+.lead{background:var(--soft);border-left:4px solid var(--accent);border-radius:8px;padding:10px 14px;font-size:15px;font-style:italic}
+.qs{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.qs li{background:var(--soft);border-radius:8px;padding:8px 12px;font-size:15px}
+.qs li::before{content:"“";color:var(--accent);font-weight:800;margin-right:2px}
+.qs li::after{content:"”";color:var(--accent);font-weight:800}
+.qs li.ins{font-style:italic;color:var(--muted)}
+.qs li.ins::before,.qs li.ins::after{content:""}
+.gh{font-size:14px;font-weight:700;margin:12px 0 6px}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;padding:12px 14px;border-radius:12px;width:100%;border-width:2px;position:relative}
+.opt b{flex:0 0 34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px}
+.opt[data-v="0"] b{background:var(--s0)} .opt[data-v="1"] b{background:var(--s1)}
+.opt[data-v="2"] b{background:var(--s2)} .opt[data-v="3"] b{background:var(--s3)} .opt[data-v="4"] b{background:var(--s4)}
+.opt strong{display:block}
+.opt small{display:block;color:var(--muted);font-size:14px;margin-top:2px}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt.sel::after{content:"✓";position:absolute;right:14px;top:12px;color:var(--accent);font-weight:800}
+.opt.sug:not(.sel){border-style:dashed;border-color:var(--accent)}
+.box{padding:10px 14px;border-radius:10px;margin-top:12px;font-size:15px}
+.box.warn{background:var(--warn-soft);border-left:4px solid var(--warn)}
+.box.tip{background:var(--accent-soft);border-left:4px solid var(--accent)}
+.chk{display:flex;gap:8px;align-items:center;font-size:15px;margin-top:10px;cursor:pointer}
+.chk input{width:18px;height:18px;flex:0 0 18px}
+.toggles{display:flex;flex-wrap:wrap;gap:6px}
+.tog{font-size:14px;padding:6px 12px;border-radius:999px}
+.tog.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.brs{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.brs button{font-weight:600}
+.brs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.helper{margin-top:16px;border:1px dashed var(--accent);border-radius:12px;padding:12px 14px;background:var(--card)}
+.helper .hrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0}
+.helper .hrow>span{font-size:14px;flex:1 1 220px}
+.cnt{display:inline-flex;gap:4px;flex-wrap:wrap}
+.cnt button{min-width:36px;height:34px;padding:0 6px;font-weight:700;border-radius:8px;font-variant-numeric:tabular-nums}
+.cnt button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.helper .res{margin-top:8px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.navbtns{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.kbd{font-size:12px;color:var(--muted);text-align:center}
+.kbd kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;font-family:inherit;background:var(--soft)}
+
+.qgroup{margin-bottom:14px}
+.qhead{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+.qhead .sub{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:700}
+.qrow{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
+.qrow .n{font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.qrow .tt{font-size:15px;cursor:pointer}
+.qrow .tt:hover{color:var(--accent)}
+.qseg{display:inline-flex;gap:4px}
+.qseg button{width:38px;height:36px;padding:0;font-weight:700;border-radius:8px}
+.qseg button.on[data-v="0"]{background:var(--s0);border-color:var(--s0);color:#fff}
+.qseg button.on[data-v="1"]{background:var(--s1);border-color:var(--s1);color:#fff}
+.qseg button.on[data-v="2"]{background:var(--s2);border-color:var(--s2);color:#fff}
+.qseg button.on[data-v="3"]{background:var(--s3);border-color:var(--s3);color:#fff}
+.qseg button.on[data-v="4"]{background:var(--s4);border-color:var(--s4);color:#fff}
+@media (max-width:560px){.qrow{grid-template-columns:24px 1fr}.qseg{grid-column:1/-1;justify-content:flex-end}}
+
+.hero{display:flex;gap:28px;align-items:flex-end;flex-wrap:wrap}
+.big{font-size:52px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.big small{font-size:20px;color:var(--muted);font-weight:600}
+.bigl{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.pill{display:inline-block;padding:4px 12px;border-radius:999px;font-weight:700;font-size:14px;color:#fff}
+.dbar{display:grid;grid-template-columns:minmax(120px,190px) 1fr 80px;gap:10px;align-items:center;margin:8px 0;font-size:14px}
+.dbar .tr{height:12px;background:var(--line);border-radius:6px;overflow:hidden}
+.dbar .tr i{display:block;height:100%;border-radius:6px}
+.dbar .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+@media (max-width:560px){.dbar{grid-template-columns:100px 1fr 56px}}
+.irow{display:grid;grid-template-columns:28px 1fr 34px;gap:8px;align-items:center;font-size:14px;padding:4px 0;border-top:1px solid var(--line)}
+.irow .dot{width:30px;height:24px;border-radius:6px;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+pre{white-space:pre-wrap;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;max-height:320px;overflow:auto}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted);font-size:14px}
+.hist{display:grid;gap:6px}
+.hist .h{display:flex;gap:10px;align-items:center;padding:8px 10px;background:var(--soft);border-radius:8px;font-size:14px;flex-wrap:wrap}
+.hist .h .sp{margin-left:auto}
+.delta{font-weight:700}
+.foot{max-width:1180px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:12px}
+
+#sheet{display:none}
+@media print{
+  @page{size:A4;margin:14mm}
+  body{background:#fff;color:#000;font-size:11pt}
+  .inst,.status,.layout,.mtabs,.foot{display:none!important}
+  #sheet{display:block}
+  #sheet .ph{display:flex;align-items:center;gap:10px;border-bottom:2px solid #000;padding-bottom:6px}
+  #sheet .ph .seal{border-color:#000;color:#000}
+  #sheet h1{font-size:14pt;margin:8px 0 2px;text-align:center}
+  #sheet .sub{text-align:center;font-size:9.5pt;margin-bottom:8px}
+  #sheet table{font-size:9.5pt}
+  #sheet th,#sheet td{border:1px solid #000;padding:3px 6px}
+  #sheet .meta td{border:none;padding:2px 4px}
+  #sheet .dh td{background:#e8e8e8;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #sheet .sig{margin-top:36px;display:flex;justify-content:space-between}
+  #sheet .sig div{width:45%;border-top:1px solid #000;text-align:center;padding-top:4px;font-size:9.5pt}
+  #sheet .note{font-size:8.5pt;margin-top:10px}
+}
+</style>
+</head>
+<body>
+<div class="inst"><div class="in">
+  <div class="seal">CAINS</div>
+  <div><div class="t1">Evaluación de síntomas negativos</div><div class="t2">Entrevista clínica semiestructurada</div></div>
+  <div class="tool"><b>CAINS</b>Clinical Assessment Interview for Negative Symptoms</div>
+</div></div>
+<div class="status"><div class="in" id="status"></div></div>
+<nav class="mtabs" id="mtabs"></nav>
+<div class="layout">
+  <aside class="side" id="side"></aside>
+  <main id="main"></main>
+</div>
+<div class="foot">Herramienta de apoyo clínico de acceso abierto basada en la versión en castellano de la CAINS. No reemplaza el manual ni el entrenamiento oficial de la escala (Kring et al., 2013). Los datos se guardan solo en este navegador.</div>
+<div id="sheet"></div>
+
+<script>
+const ANCHOR=["Sin deterioro","Déficit leve","Déficit moderado","Déficit moderadamente grave","Déficit severo"];
+const SUBS=[
+  {k:"S",name:"Social",full:"Social (motivación y placer)",items:[1,2,3,4]},
+  {k:"T",name:"Trabajo y escuela",full:"Trabajo y escuela (motivación y placer)",items:[5,6]},
+  {k:"R",name:"Recreación",full:"Recreación y entretenimiento (motivación y placer)",items:[7,8,9]},
+  {k:"E",name:"Expresión",full:"Expresión",items:[10,11,12,13]}
+];
+const MAP=[1,2,3,4,5,6,7,8,9], EXP=[10,11,12,13];
+const FAM="(familia/cónyuge/pareja)", AMI="[amigos/pareja/citas]";
+const ITEMS={
+1:{t:"Motivación para relaciones cercanas con la familia, el cónyuge o la pareja",per:"Semana pasada",
+ note:"Las relaciones amorosas se evalúan en el ítem 1 o en el 2, nunca en ambos. Cónyuge o pareja con quien vive: ítem 1. Noviazgo o relación romántica sin convivencia: ítem 2.",
+ lead:"Las siguientes preguntas están relacionadas con tu familia. Nos referimos a familiares como padres, hermanos o hermanas y otros familiares, así como tu cónyuge (si estás casado) o tu pareja si convives con ella.",
+ open:["¿Has estado en contacto con tu familia o la has visitado durante la última semana (en persona, por teléfono o correo electrónico)?","¿Has tenido algún contacto con tu cónyuge o pareja?"],
+ br:["Tiene contacto","No tiene contacto"],
+ g:[[
+  {h:"Contacto",q:["¿Con quién has estado en contacto? ¿Alguien más?","¿Qué has hecho con tu familia?","Si procede: ¿qué cosas has hecho con tu cónyuge o pareja?","¿Cuánto tiempo pasasteis juntos?"]},
+  {h:"Comportamiento",q:[`¿Qué has hecho para ver o ponerte en contacto con tu ${FAM} en la última semana?`,`Cuando estabas con tu ${FAM}, ¿quién decidió qué haríais?`,`¿Quién comenzó la conversación? ¿La empezaste tú? ¿La empezó tu ${FAM}? ¿Participaste en la conversación?`,`¿Alguna vez te has encontrado con que querías terminar rápidamente la interacción o el contacto con tu ${FAM}? ¿Hubieses querido que durase más tiempo?`]},
+  {h:"Motivación e interés en la proximidad",q:[`¿Has estado motivado para estar en contacto con tu ${FAM} en la última semana? (¿Por qué?)`,`¿De qué hablasteis? ¿Puedes hablar de buenos y malos momentos con tu ${FAM}?`,`¿Qué proximidad o cercanía sientes con tu ${FAM}? ¿Qué significa estar próximo para ti?`,`¿Hubo algún momento de la semana pasada en el que simplemente no quisiste estar cerca o en contacto con tu ${FAM}?`,"¿Cómo de importante es para ti formar parte de una familia?","¿Esto es importante para ti? ¿Te has sentido de esta manera a lo largo de la semana pasada?"]}
+ ],[
+  {h:"Sin contacto",note:"Se aplica cuando no forma parte de una familia unida o cuando, aun pudiendo contactar con su familia, no ha querido. Si no tiene actualmente cónyuge o pareja con quien viva, el interés en relaciones románticas se evalúa en el ítem 2.",
+   q:["¿Tu familia intentó comunicarse contigo o visitarte la semana pasada?","¿Has tenido algo que te haya impedido estar en contacto con tu familia?","¿Desearías haber estado más cerca de tu familia? ¿O te gustaría ser parte de una familia más unida?","¿Echaste de menos tener contacto con tu familia la semana pasada?","¿Tener una relación con tu familia es importante para ti? ¿Qué es importante para ti de tener esa relación?","¿Has preferido pasar tu tiempo a solas en lugar de con tu familia?"]}
+ ]],
+ e:["Muy interesado y valora los lazos cercanos con la familia como una de las partes más importantes de su vida. Desea y está muy motivado para estar en contacto con la familia. Regularmente inicia y mantiene contacto con ella y participa activamente en estas interacciones. Puede discutir abiertamente cosas buenas y malas. Dentro de los límites normales.",
+    "Generalmente interesado por tener buen contacto y proximidad con la familia, aunque su respuesta sugiere una reducción menor o cuestionable. Por lo general desea y está motivado para mantener el contacto con la familia. Tiene una relación estrecha con un miembro de la familia en la que se pueden discutir cosas buenas y malas. Déficit leve en el inicio y la persistencia de las interacciones regulares con la familia. Por lo general participa activamente en las interacciones.",
+    "Algo interesado en las relaciones familiares; las considera poco importantes. Ocasionalmente puede echar de menos relaciones cercanas con la familia, pero está solo un poco motivado para buscar la interacción. Déficit notable en la iniciación y persistencia de la participación; la discusión de cosas buenas y malas es limitada. Las interacciones son en gran medida superficiales; la participación se caracteriza mejor como «ir con lo establecido». Las interacciones las inicia principalmente la familia y la persona participa de forma pasiva.",
+    "Poco interés en las relaciones familiares («lo tomas o lo dejas») y no describe los lazos familiares como algo importante. Casi ninguna motivación; realiza el esfuerzo mínimo para tener una relación familiar cercana. Rara vez discute buenos y malos momentos con la familia. El contacto y el compromiso son superficiales y pasivos. Los esfuerzos por iniciar y mantener la interacción provienen de los familiares, no del sujeto.",
+    "No presenta interés por las relaciones familiares y no las considera en absoluto importantes. Prefiere estar solo y no está nada motivado para estar con sus familiares. Si ve a la familia, lo suele hacer a regañadientes, pasivamente y sin interés."]},
+2:{t:"Motivación para relaciones cercanas con amigos y relaciones románticas",per:"Semana pasada",
+ note:"Noviazgo o relación romántica sin convivencia se evalúa aquí. Cónyuge o pareja con quien vive: ítem 1.",
+ lead:"Ahora vamos a hablar de amigos (y citas o relaciones románticas). Por amigos me refiero a la gente que te conoce y con la que pasas el tiempo, o alguien en quien puedes confiar y con quien puedes contar cuando lo necesitas.",
+ open:["¿Has tenido algún contacto con tus amigos en la última semana (en persona, por teléfono, correo electrónico)?","Si procede: ¿has estado en contacto con una pareja romántica o has tenido alguna cita la semana pasada?"],
+ br:["Tiene contacto","Sin amigos ni citas"],
+ g:[[
+  {h:"Contacto",q:["En la última semana, ¿qué has hecho con tus amigos (o pareja/citas)?","Háblame de lo que hicisteis (o de lo que hablasteis) durante la cita, actividad o conversación.","¿Cuánto tiempo pasaste con tus amigos, pareja o citas?"]},
+  {h:"Comportamiento",q:[`¿Qué hiciste para ver o ponerte en contacto con tus ${AMI} la semana pasada?`,`Cuando estabas con tus ${AMI}, ¿quién decidió lo que haríais?`,`Cuando hablabas con tus ${AMI}, ¿quién comenzó la conversación? ¿Lo hiciste tú?`,`¿Alguna vez sentiste que querías terminar rápidamente la interacción con tus ${AMI}? ¿Hubieses querido que durase más tiempo?`]},
+  {h:"Motivación e interés en la proximidad",q:[`¿Te sentiste motivado para estar con tus ${AMI} la semana pasada? ¿Por qué?`,"¿Puedes hablar sobre cosas buenas y cosas malas?",`¿En algún momento de la semana pasada sentiste que no tenías ganas de estar con tus ${AMI}?`,"¿Cómo de importante es para ti tener amistades (pareja/citas)? ¿Por qué?",`¿Cómo de próximo o cercano te sientes a tus ${AMI}? ¿Qué significa esa proximidad para ti?`]}
+ ],[
+  {h:"Sin contacto con amigos ni citas",q:["¿Estás interesado en tener amigos o pareja?","¿Tener amistades (o estar en una relación romántica) es importante para ti? En caso afirmativo, ¿por qué piensas que es importante?","¿Has echado de menos este tipo de relaciones en la última semana?","¿Te gustaría tener amigos (o una pareja) con quien poder hablar de cosas buenas y malas?","(Si hay algún interés) ¿Has dado algún paso para conocer a alguien que podría ser un amigo o una pareja?","¿Hay algo que te haya impedido estar en contacto con tus amigos?","¿Preferirías tener amistades (o una relación romántica) o prefieres estar solo?"]}
+ ]],
+ e:["Muy interesado y valora tener relaciones íntimas y estrechas con amigos/citas como una de las partes más importantes de la vida. Desea y está muy motivado para estar en contacto con amigos/citas. Regularmente inicia y mantiene contacto y participa activamente en estas interacciones. Puede discutir abiertamente cosas buenas y malas. Dentro de los límites normales.",
+    "Generalmente interesado por las relaciones íntimas con amigos/citas, aunque la respuesta sugiere una reducción menor o cuestionable. Por lo general desea y está motivado para mantener el contacto con amigos/citas. Tiene una relación estrecha con un miembro de la familia en la que se pueden discutir cosas buenas y malas. Déficit leve en el inicio y la persistencia de las interacciones regulares con amigos/citas. Por lo general participa activamente en las interacciones.",
+    "Algo interesado en las relaciones con amigos/citas; las considera poco importantes. Ocasionalmente puede echarlas de menos, pero está solo un poco motivado para buscar la interacción. Déficit notable en la iniciación y persistencia de la participación; la discusión de cosas buenas y malas es limitada. Las interacciones son en gran medida superficiales; la participación se caracteriza mejor como «ir con lo establecido». Las interacciones las inician principalmente los amigos y la persona participa de forma pasiva.",
+    "Poco interés en tener relaciones con amigos/citas («lo tomas o lo dejas») y no las describe como algo importante. Raramente presenta motivación; realiza el esfuerzo mínimo para tener una relación cercana y quiere estar solo lo antes posible. El contacto y el compromiso son superficiales y pasivos. Los esfuerzos por iniciar y mantener la interacción provienen de los otros.",
+    "No presenta interés por tener relaciones con amigos/citas y no las considera en absoluto importantes. Prefiere estar solo y no está en absoluto motivado para tener amigos/citas."]},
+3:{t:"Frecuencia de actividades sociales placenteras",per:"Semana pasada",hp:"days",
+ note:"La puntuación se basa en el número de días de la semana pasada en que experimentó y disfrutó de actividades sociales. Si informa de varias actividades, aclare si ocurrieron el mismo día o en días diferentes.",
+ lead:"Ahora quiero hablar contigo acerca de cómo te sentiste durante el tiempo que pasaste con otras personas, o en contacto con ellas, durante la semana pasada. Puedes incluir los momentos que pasaste con cualquiera de las personas de las que hemos hablado hasta ahora.",
+ open:["¿Has tenido alguna interacción agradable con otras personas, tales como:","Familia (pausa)","Parejas románticas o citas (pausa)","Amigos (pausa)","¿Cualquier otra interacción social agradable o tiempo dedicado a la gente? (pausa)"],
+ openIns:[1,2,3],
+ g:[[
+  {h:"Si es necesario",q:["Pregunte por las otras personas de otras secciones con las que haya tenido relaciones o una interacción placentera."],ins:true},
+  {h:"Si es afirmativo",q:["¿Fueron agradables?","¿Cuántos días disfrutaste de estas interacciones (tiempo pasado con esa persona o personas)? (para cada una)","[Si menciona muchos días, p. ej. 5 o 6, o no está claro qué días disfrutó] ¿Hubo algún día en el que no tuviste interacciones agradables con otras personas?"]}
+ ]],
+ e:["Cada día experimenta placer.","Experimenta placer 5–6 días.","Experimenta placer 3–4 días.","Experimenta placer 1–2 días.","No reporta placer."]},
+4:{t:"Frecuencia esperada de actividades sociales placenteras",per:"Próxima semana",hp:"count",
+ note:"La puntuación se basa en el número total de actividades agradables esperadas, independientemente del día en que espera que ocurran.",
+ lead:"Ahora me gustaría que pensases en la semana que viene (los 7 próximos días), en con quién vas a pasar el tiempo. Puedes incluir a las personas de las que ya has hablado o a cualquier otra persona.",
+ open:["¿Qué crees que te gustaría hacer la próxima semana con estas personas?"],
+ g:[[
+  {h:"Para cada respuesta",q:["¿Cuánto o qué esperas disfrutar?","¿Con qué frecuencia piensas que vas a disfrutar de estas actividades la semana que viene?"]},
+  {h:"Seguimiento",q:["¿Hay otras experiencias con gente que creas que podrás disfrutar la semana que viene?"]}
+ ]],
+ e:["Espera experimentar muchas (7 o más) experiencias agradables.","Espera experimentar varias (5–6) experiencias agradables.","Espera experimentar unas pocas (3–4) experiencias agradables.","Espera experimentar un par (1–2) de actividades agradables.","No espera tener experiencias agradables."]},
+5:{t:"Motivación para actividades de trabajo y escuela",per:"Semana pasada",
+ lead:"Ahora voy a hacerte algunas preguntas sobre el trabajo y la escuela, incluyendo el grado de motivación que has experimentado durante las actividades de trabajo o escuela y cómo te sentiste al hacerlas durante la semana pasada.",
+ open:["¿Asististe a la escuela durante la semana pasada?","¿Hiciste algún trabajo voluntario?","¿Estás en algún programa de tratamiento relacionado con el trabajo?"],
+ br:["Tiene un papel relevante","No tiene un papel actual"],
+ g:[[
+  {h:"Papel actual",q:["Háblame sobre lo que haces en tu trabajo o escuela.","¿Cuánto tiempo estuviste involucrado en esta actividad la semana pasada?"]},
+  {h:"Comportamiento",q:["¿Has sido capaz de completar tus tareas en la escuela o el trabajo?","Durante la semana pasada, ¿alguien planteó dudas acerca de tu rendimiento en tus tareas?","¿Faltaste algún día la semana pasada? ¿Por qué?","¿Es necesario que alguien te recuerde algo acerca de tus tareas? ¿Por qué?","¿Hubo cosas que querías hacer o que se suponía que debías hacer, pero que nunca llegaste a hacer? ¿Por qué?"]},
+  {h:"Motivación",q:["¿Cómo te sientes acerca de tu trabajo o escuela?","¿Te has sentido motivado para hacer tu [rol]?","¿Qué te motiva a hacer tu [rol]?","¿Hubo momentos durante la semana pasada en los que no tenías ganas de hacer las funciones de tu [rol]?","¿Cómo de importante es tu [rol] para ti? ¿Por qué?"]}
+ ],[
+  {h:"Sin papel actual",q:["¿Hay alguna razón por la que no estés en el trabajo, la escuela o un voluntariado?","¿Hay algo que te haya impedido buscar trabajo, escuela o voluntariado?","¿Cómo te sientes acerca de trabajar, ir a la escuela o ser voluntario?","¿Has tenido mucho interés en el trabajo, la escuela o el voluntariado? Cuéntame.","¿Para ti es importante trabajar? ¿Por qué?","¿Echas de menos el trabajo, la escuela o el voluntariado?","¿Has tratado de hacer algo o dar algún paso para empezar a trabajar, ir a la escuela o hacer voluntariado? ¿Qué has hecho? ¿Cuántas veces has buscado un trabajo, una escuela o un voluntariado?"]}
+ ]],
+ e:["Se encuentra MUY MOTIVADO para buscar trabajo, ir a la escuela o buscar nuevas oportunidades en el trabajo, la escuela o el voluntariado. Inicia y mantiene regularmente las actividades en el trabajo, en la escuela o en la búsqueda de empleo. Dentro de los límites normales.",
+    "Está GENERALMENTE MOTIVADO para buscar trabajo, ir a la escuela o buscar nuevas oportunidades en el trabajo, la escuela o el voluntariado. Déficit leve en iniciar y mantener dichas actividades; puede iniciarlas pero presenta una persistencia moderada.",
+    "Está ALGO MOTIVADO para buscar trabajo, ir a la escuela o buscar nuevas oportunidades. Déficit notable en la iniciación: puede haber iniciado alguna actividad pero necesita recordatorios en múltiples ocasiones, y/o no inicia ninguna actividad nueva, y/o no las mantiene durante mucho tiempo.",
+    "Está LIGERAMENTE MOTIVADO para buscar trabajo, ir a la escuela o buscar nuevas oportunidades. Déficit significativo en la iniciación: puede haber necesitado constantes recordatorios para iniciar alguna actividad. No las mantiene por mucho tiempo.",
+    "Está ABSOLUTAMENTE DESMOTIVADO para buscar trabajo o ir a la escuela. Prácticamente falta total de iniciación y persistencia en el trabajo, la escuela o la búsqueda de trabajo."]},
+6:{t:"Frecuencia esperada de actividades placenteras de trabajo y escuela",per:"Próxima semana",hp:"count",
+ note:"La puntuación se basa en el número total de actividades agradables esperadas, independientemente del día en que espera que ocurran.",
+ lead:"Ahora me gustaría que pensases en la semana que viene (próximos 7 días); piensa en el trabajo, el voluntariado o la escuela.",
+ open:[],
+ br:["Tiene un papel relevante","No tiene un papel actual"],
+ g:[[
+  {h:"Papel actual",q:["¿Crees que te gustará algo que tengas que hacer la próxima semana en el trabajo, el voluntariado o la escuela?"]},
+  {h:"Para cada respuesta",q:["¿Y qué esperas disfrutar?","¿Cuánto piensas que disfrutarás de esto en la semana que viene?"]},
+  {h:"Seguimiento",q:["¿Hay alguna otra actividad del trabajo o la escuela que pienses que vas a disfrutar la semana que viene?"]}
+ ],[
+  {h:"Sin papel actual",q:["¿Crees que podrás disfrutar de algo relacionado con la búsqueda de trabajo remunerado o voluntariado, o con la escuela?"]},
+  {h:"Para cada respuesta",q:["¿Y qué esperas disfrutar?","¿Cuánto piensas que disfrutarás de esto en la semana que viene?"]},
+  {h:"Seguimiento",q:["¿Hay alguna otra actividad del trabajo o la escuela que pienses que vas a disfrutar la semana que viene?"]}
+ ]],
+ e:["Espera tener MUCHAS (7 o más) experiencias agradables.","Espera experimentar VARIAS (5–6) experiencias agradables.","Espera disfrutar de UNAS POCAS (3–4) experiencias agradables.","Espera disfrutar de UN PAR (1–2) de experiencias agradables.","No espera disfrutar de NINGUNA experiencia agradable."]},
+7:{t:"Motivación para actividades de recreación y entretenimiento",per:"Semana pasada",
+ lead:"En el siguiente apartado voy a hacerte algunas preguntas acerca de lo que haces en tu tiempo libre, tus aficiones o hobbies. Te preguntaré por tu motivación y por cómo te sentiste con las actividades que hiciste en tu tiempo libre durante la semana pasada.",
+ open:["¿Qué hiciste en tu tiempo libre la semana pasada?","¿Participaste en algún hobby o actividad de ocio como hacer deporte, jugar a algún juego, ir a la iglesia, ver la TV, escuchar música, leer, navegar por internet, caminar u otras actividades de este tipo la semana pasada?"],
+ g:[[
+  {h:"Si es afirmativo · Comportamiento",q:["Háblame de tu actividad. ¿Cuánto tiempo te involucraste en ella la semana pasada?","¿Quisiste hacer (actividad) más de lo que ya hacías? ¿La actividad duró más de lo que esperabas? ¿Por qué la hiciste solo durante (xx)?","¿Se interpuso algo en tu camino para hacer estas actividades la semana pasada? ¿Qué pasó?","¿Quién inició estas actividades? ¿Necesitaste que alguien te recordase participar en ellas?"]},
+  {h:"Motivación",q:["¿Cómo fue tu motivación para participar en estas actividades la semana pasada?","¿Alguna vez te has sentido como si no estuvieses interesado en estas actividades?","¿Este tipo de actividades son importantes para ti? ¿Por qué? ¿Has estado interesado en realizarlas?","¿Has sentido alguna vez que preferías no hacer nada en lugar de involucrarte en este tipo de actividades?"]}
+ ]],
+ e:["Se encuentra MUY MOTIVADO para buscar y realizar actividades de entretenimiento y hobbies. Inicia y mantiene dichas actividades. Dentro de los límites normales.",
+    "Está GENERALMENTE MOTIVADO para buscar y realizar actividades de entretenimiento y hobbies. Déficit leve en iniciarlas y mantenerlas; puede iniciarlas pero presenta una persistencia moderada.",
+    "Está ALGO MOTIVADO para buscar y realizar actividades de entretenimiento y hobbies. Déficit notable en el inicio: puede haber iniciado alguna actividad pero necesita recordatorios en múltiples ocasiones, y/o no inicia ninguna actividad nueva, y/o no las mantiene durante mucho tiempo.",
+    "Está LIGERAMENTE MOTIVADO para buscar y realizar actividades de entretenimiento y hobbies. Déficit significativo en la iniciación: puede haber necesitado constantes recordatorios para iniciar alguna actividad. No las mantiene por mucho tiempo.",
+    "Está ABSOLUTAMENTE DESMOTIVADO para buscar y realizar actividades de entretenimiento y hobbies. Prácticamente falta total de iniciación y persistencia en estas actividades."]},
+8:{t:"Frecuencia de actividades placenteras de recreación",per:"Semana pasada",hp:"variety",
+ note:"La puntuación se basa tanto en la variedad de actividades agradables de entretenimiento como en la frecuencia diaria en que las realiza. Si realiza diferentes actividades, aclare si las hace el mismo día o en días diferentes.",
+ lead:"¿Tuviste alguna experiencia agradable con alguna actividad o algo que hiciste en tu tiempo libre la semana pasada? Puedes incluir cualquiera de las actividades de las que hemos hablado o cualquier otra actividad de ocio: ver la TV, algún deporte o juego, ir a la iglesia, escuchar música, leer, navegar por internet, caminar u otras.",
+ open:[],
+ g:[[
+  {h:"Para cada actividad",q:["¿Qué hizo que [actividad] fuese agradable?","¿Cuántos días disfrutaste de estas experiencias o actividades?"]},
+  {h:"Si es necesario",q:["Pregunte por las actividades de otras secciones que se hayan descrito como agradables."],ins:true},
+  {h:"Seguimiento",q:["¿Tienes alguna otra experiencia agradable por cosas que hagas en tu tiempo libre o con tus hobbies?"]}
+ ]],
+ e:["Por lo menos UNAS CUANTAS (3) experiencias agradables de diferentes tipos; experiencias agradables diarias.","Al menos UNAS CUANTAS (3) experiencias agradables de diferentes tipos; más días con experiencias agradables que sin ellas.","1 o 2 tipos diferentes de experiencias agradables; más días con ellas que sin ellas.","1 tipo de experiencia agradable; solo algunos días.","No tiene experiencias agradables."]},
+9:{t:"Frecuencia esperada de actividades placenteras de recreación",per:"Próxima semana",hp:"count",
+ note:"La puntuación se basa en el número total de actividades placenteras esperadas, independientemente del día en que se espera que ocurran.",
+ lead:"Ahora me gustaría que pensases en la semana que viene (próximos 7 días), en tu tiempo libre, hobbies u ocio. Puedes incluir cualquiera de las actividades de las que ya hemos hablado o cualquier otra nueva.",
+ open:["¿Qué crees que te gustará hacer la semana que viene para disfrutar durante tu tiempo libre?"],
+ g:[[
+  {h:"Para cada respuesta",q:["¿Con qué esperas disfrutar?","¿Con qué frecuencia piensas que vas a disfrutar de [la actividad] la semana que viene?"]},
+  {h:"Seguimiento",q:["¿Crees que hay otras cosas o hobbies de los que podrás disfrutar en tu tiempo libre la semana que viene?"]}
+ ]],
+ e:["Espera tener MUCHAS (7 o más) experiencias agradables.","Espera experimentar VARIAS (5–6) experiencias agradables.","Espera disfrutar de UNAS POCAS (3–4) experiencias agradables.","Espera disfrutar de UN PAR (1–2) de experiencias agradables.","No espera disfrutar de NINGUNA experiencia agradable."]},
+10:{t:"Expresión facial",per:"Toda la entrevista",
+ obs:"Tenga en cuenta los movimientos de todas las partes de la cara: los ojos (p. ej., levanta las cejas cuando se sorprende), la boca (sonríe o hace muecas) y la zona media de la cara (p. ej., arruga la nariz cuando siente asco).",
+ e:["DENTRO DE LOS LÍMITES NORMALES. Expresiones frecuentes durante toda la entrevista.","LEVE DISMINUCIÓN en la frecuencia de las expresiones faciales, con algunas expresiones limitadas en algunos pocos momentos de la entrevista.","DÉFICIT NOTABLE en la frecuencia de las expresiones faciales, con disminución de las expresiones en varios momentos de la entrevista.","FALTA SIGNIFICATIVA de expresiones faciales. Solo unos pocos cambios en la expresión facial en la mayor parte de la entrevista.","CASI FALTA TOTAL de expresiones faciales durante la entrevista."]},
+11:{t:"Expresión vocal",per:"Toda la entrevista",
+ obs:"Se refiere a las características prosódicas del discurso: los cambios de tono a lo largo del discurso. La velocidad, la cantidad o el contenido del discurso no se evalúan aquí.",
+ e:["DENTRO DE LOS LÍMITES NORMALES. Variación normal en la entonación vocal durante la entrevista. El lenguaje es expresivo y animado.","LEVE DISMINUCIÓN en la entonación vocal. La variación en la entonación se produce de manera limitada durante unos pocos momentos de la entrevista.","DISMINUCIÓN NOTABLE en la entonación vocal en varios momentos de la entrevista. Gran parte del discurso carece de variabilidad, pero sí hay cambios prosódicos en varios momentos.","FALTA SIGNIFICATIVA de entonación vocal, con solo unos pocos cambios en la mayor parte de la entrevista. La mayor parte del discurso es plano, con algún cambio prosódico aislado.","CASI FALTA TOTAL de cambio en la entonación vocal; discurso monótono y plano a lo largo de la entrevista."]},
+12:{t:"Expresión gestual",per:"Toda la entrevista",
+ obs:"Gestos que enfatizan lo que se comunica verbalmente: manos, cabeza (asentir), hombros (encogerse de hombros) y tronco (inclinarse hacia delante o hacia atrás).",
+ e:["DENTRO DE LOS LÍMITES NORMALES. Realiza gestos frecuentemente durante toda la entrevista.","LEVE DISMINUCIÓN en la expresión gestual, con alguna limitación en algunos pocos momentos de la entrevista.","DISMINUCIÓN NOTABLE en la frecuencia de gestos expresivos en varios momentos de la entrevista.","FALTA SIGNIFICATIVA de expresión gestual. Solo unos pocos gestos expresivos a lo largo de la entrevista.","CASI FALTA TOTAL de expresión gestual."]},
+13:{t:"Cantidad del discurso",per:"Toda la entrevista",
+ obs:"Se refiere a la cantidad de palabras en el discurso. No se evalúan aquí la desorganización, los neologismos ni el contenido psicótico. Por ejemplo, una persona desorganizada puede producir muchas palabras y puntuar bajo (normal) en este ítem.",
+ e:["CANTIDAD NORMAL de discurso a lo largo de la entrevista. Sus respuestas dan la información necesaria y con frecuencia elabora respuestas espontáneas.","LEVE DISMINUCIÓN en la cantidad del discurso, con algunas respuestas breves en algunos momentos de la entrevista.","DISMINUCIÓN NOTABLE en la producción del habla, con respuestas breves en varios momentos de la entrevista.","FALTA SIGNIFICATIVA de discurso, con respuestas muy breves (una o dos palabras) en la mayoría de las respuestas.","Todas o casi todas las respuestas de la entrevista son de una o dos palabras."]}
+};
+
+const KEY="cains-app-v1", HKEY="cains-hist-v1";
+const N=13, ALL=Array.from({length:N},(_,i)=>i+1);
+const CTX=["Ambulatorio","Hospitalización","Larga estancia","Hospital de día / talleres"];
+const PAREJA=[["conviviente","Convive con cónyuge o pareja → ítem 1"],["no conviviente","Pareja o citas sin convivir → ítem 2"],["sin pareja","Sin pareja"]];
+const COL=["var(--s0)","var(--s1)","var(--s2)","var(--s3)","var(--s4)"];
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+function blank(mode){return {view:"datos",mode:mode||"entrevista",auto:true,cur:1,
+  meta:{id:"",hc:"",edad:"",sexo:"",dx:"",servicio:"",fecha:today(),evaluador:"",tipo:"Basal",contexto:"Ambulatorio",pareja:"",obs:""},
+  r:{},notes:{},br:{},hv:{}}}
+function load(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v||d}catch(e){return d}}
+let S=load(KEY,blank()), H=load(HKEY,[]);
+S=Object.assign(blank(),S,{meta:Object.assign(blank().meta,S.meta)});
+let savedTimer;
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(S));localStorage.setItem(HKEY,JSON.stringify(H))}catch(e){}
+  const el=document.getElementById("saved");if(el){el.classList.add("show");clearTimeout(savedTimer);savedTimer=setTimeout(()=>el.classList.remove("show"),900)}
+}
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const subOf=n=>SUBS.find(d=>d.items.includes(n));
+const sumOf=(st,arr)=>arr.reduce((a,i)=>a+(st.r[i]===undefined?0:st.r[i]),0);
+const cntOf=(st,arr)=>arr.filter(i=>st.r[i]!==undefined).length;
+
+function calc(st){st=st||S;
+  const per=SUBS.map(d=>({...d,s:sumOf(st,d.items),done:cntOf(st,d.items),max:d.items.length*4}));
+  const map=sumOf(st,MAP),exp=sumOf(st,EXP);
+  return{map,exp,tot:map+exp,done:cntOf(st,ALL),mapDone:cntOf(st,MAP),expDone:cntOf(st,EXP),per}}
+
+/* ---------- count helpers ---------- */
+function sug(n,st){st=st||S;const it=ITEMS[n],h=st.hv[n]||{};
+  if(it.hp==="days"){if(h.d===undefined)return null;const d=h.d;const v=d>=7?0:d>=5?1:d>=3?2:d>=1?3:4;return{v,txt:`${d} día(s) con placer social`}}
+  if(it.hp==="count"){if(h.c===undefined)return null;const c=h.c;const v=c>=7?0:c>=5?1:c>=3?2:c>=1?3:4;return{v,txt:`${c>=7?"7 o más":c} experiencia(s) esperada(s)`}}
+  if(it.hp==="variety"){if(h.t===undefined||h.d===undefined)return null;const t=h.t,d=h.d,base=`${t>=3?"3 o más":t} tipo(s) · ${d} día(s)`;
+    if(t===0||d===0)return{v:4,txt:base};
+    if(t>=3&&d>=7)return{v:0,txt:base};
+    if(t>=3&&d>=4)return{v:1,txt:base};
+    if(d>=4)return{v:2,txt:base};
+    if(t===1)return{v:3,txt:base};
+    return{v:null,txt:base+" — sin ancla exacta (varios tipos, pocos días): entre 2 y 3, juicio clínico"}}
+  return null}
+function setH(n,k,v){S.hv[n]=Object.assign({},S.hv[n]);if(S.hv[n][k]===v)delete S.hv[n][k];else S.hv[n][k]=v;save();render()}
+function useSug(n){const s=sug(n);if(s&&s.v!==null&&S.r[n]!==s.v)setR(n,s.v)}
+function cntRow(n,k,vals,lab){const cur=(S.hv[n]||{})[k];return `<div class="cnt">${vals.map(([v,l])=>`<button class="${cur===v?"on":""}" onclick="setH(${n},'${k}',${v})" aria-label="${esc(lab)}: ${l}">${l}</button>`).join("")}</div>`}
+function helper(n){
+  const it=ITEMS[n];if(!it.hp)return "";
+  const d07=[0,1,2,3,4,5,6,7].map(v=>[v,String(v)]);
+  let rows="";
+  if(it.hp==="days")rows=`<div class="hrow"><span>Días de la semana pasada en que disfrutó de interacciones sociales</span>${cntRow(n,"d",d07,"Días")}</div>`;
+  if(it.hp==="count")rows=`<div class="hrow"><span>N.º total de experiencias agradables esperadas en los próximos 7 días</span>${cntRow(n,"c",[0,1,2,3,4,5,6,7].map(v=>[v,v===7?"7+":String(v)]),"Experiencias")}</div>`;
+  if(it.hp==="variety")rows=`<div class="hrow"><span>Tipos diferentes de experiencias agradables</span>${cntRow(n,"t",[[0,"0"],[1,"1"],[2,"2"],[3,"3+"]],"Tipos")}</div><div class="hrow"><span>Días con alguna experiencia agradable (de 7)</span>${cntRow(n,"d",d07,"Días")}</div>`;
+  const s=sug(n);
+  return `<div class="helper"><div class="lbl" style="margin-top:0">Ayuda de conteo</div>${rows}
+   ${s?`<div class="res">${s.v!==null?`Sugerido: <b>${s.v} · ${ANCHOR[s.v]}</b> <span class="muted">(${esc(s.txt)})</span> ${S.r[n]===s.v?`<span class="muted">✓ aplicado</span>`:`<button class="primary" style="margin-left:6px" onclick="useSug(${n})">Usar ${s.v}</button>`}`:`<span class="muted">${esc(s.txt)}</span>`}</div>`:`<div class="muted">Marque el conteo para ver el puntaje que corresponde a las anclas.</div>`}</div>`;
+}
+
+/* ---------- chrome ---------- */
+function renderStatus(){
+  const c=calc(),m=S.meta;
+  document.getElementById("status").innerHTML=`
+   <span class="chip">👤 ${esc(m.id||"Sin ID")}</span>
+   <div class="prog"><div class="bar"><i style="width:${c.done/N*100}%"></i></div><small>${c.done} de ${N} ítems</small></div>
+   <span class="tot">MAP ${c.map}<small>/36</small> · EXP ${c.exp}<small>/16</small></span>
+   <div class="seg" role="group" aria-label="Modo de llenado">
+     <button class="${S.mode==="entrevista"?"on":""}" onclick="setMode('entrevista')">Entrevista</button>
+     <button class="${S.mode==="rapido"?"on":""}" onclick="setMode('rapido')">Registro rápido</button>
+   </div>
+   <span class="saved" id="saved">Guardado ✓</span>`;
+}
+function side(){
+  const c=calc();
+  const curK=S.view==="item"?"d"+subOf(S.cur).k:S.view;
+  let h=`<button class="st ${curK==="datos"?"on":""}" onclick="go('datos')"><span class="num ${S.meta.id?"done":""}">✎</span>Datos de la evaluación</button>`;
+  c.per.forEach(d=>{
+    if(d.k==="S")h+=`<div class="sep">Motivación y placer (MAP)</div>`;
+    if(d.k==="E")h+=`<div class="sep">Expresión (EXP)</div>`;
+    const on=curK==="d"+d.k,full=d.done===d.items.length;
+    h+=`<button class="st ${on?"on":""}" onclick="go('d${d.k}')"><span class="num ${full?"done":""}">${full?"✓":d.k}</span>${d.name}<span class="sub">${d.s}/${d.max}</span></button>`;
+    if(on&&S.mode==="entrevista")h+=`<div class="dots">${d.items.map(i=>{const v=S.r[i];const bg=v===undefined?"":`background:${COL[v]};color:#fff;border-color:transparent`;return `<button class="${i===S.cur?"cur":""}" style="${bg}" onclick="goItem(${i})" title="${esc(ITEMS[i].t)}">${i}</button>`}).join("")}</div>`;
+  });
+  h+=`<button class="st ${curK==="res"?"on":""}" onclick="go('res')" style="margin-top:6px"><span class="num ${c.done===N?"done":""}">Σ</span>Resultado<span class="sub">${c.map}·${c.exp}</span></button>`;
+  document.getElementById("side").innerHTML=h;
+  const tabs=[["datos","Datos"]].concat(SUBS.map(d=>["d"+d.k,d.name])).concat([["res","Resultado"]]);
+  document.getElementById("mtabs").innerHTML=tabs.map(([k,l])=>`<button class="${curK===k?"on":""}" onclick="go('${k}')">${l}</button>`).join("");
+}
+function setMode(m){S.mode=m;if(S.view==="item"||S.view==="quick")S.view=m==="rapido"?"quick":"item";save();render()}
+function go(k){
+  if(k==="datos"||k==="res"){S.view=k;save();render();toTop();return}
+  const d=SUBS.find(x=>"d"+x.k===k);
+  if(S.mode==="rapido"){S.view="quick";save();render();const el=document.getElementById("g"+d.k);if(el)el.scrollIntoView({block:"start"});return}
+  S.view="item";S.cur=d.items.find(i=>S.r[i]===undefined)||d.items[0];save();render();toTop();
+}
+function goItem(n){S.view=S.mode==="rapido"?"quick":"item";S.cur=n;save();render();toTop()}
+function toTop(){window.scrollTo({top:0,behavior:"auto"})}
+
+/* ---------- datos ---------- */
+function viewDatos(){
+  const m=S.meta;
+  const inp=(k,l,t="text",ph="")=>`<label class="f">${l}<input type="${t}" value="${esc(m[k])}" placeholder="${ph}" oninput="S.meta['${k}']=this.value;save();renderStatus()"></label>`;
+  const tog=(k,opts)=>`<div class="toggles">${opts.map(o=>`<button class="tog ${m[k]===o?"on":""}" onclick="S.meta['${k}']=S.meta['${k}']===this.dataset.v?'':this.dataset.v;save();render()" data-v="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
+  const prev=H.filter(h=>h.meta.id&&m.id&&h.meta.id.trim().toLowerCase()===m.id.trim().toLowerCase());
+  return `<div class="card">
+   <div class="eyebrow">Paso 1</div><h2>Datos de la evaluación</h2>
+   <p class="what">Use iniciales o número de historia. No escriba el nombre completo.</p>
+   <div class="grid">
+     ${inp("id","ID / iniciales","text","p. ej. JFC-01")}
+     ${inp("hc","N.º de historia clínica")}
+     ${inp("edad","Edad","number")}
+     ${inp("fecha","Fecha","date")}
+     ${inp("dx","Diagnóstico (CIE-10)","text","p. ej. F20.0")}
+     ${inp("servicio","Pabellón / servicio")}
+     ${inp("evaluador","Evaluador")}
+   </div>
+   <div class="lbl">Sexo</div>${tog("sexo",["Femenino","Masculino"])}
+   <div class="lbl">Momento de la evaluación</div>${tog("tipo",["Basal","Seguimiento","Alta"])}
+   <div class="lbl">Contexto</div>${tog("contexto",CTX)}
+   <div class="lbl">Situación de pareja <span style="text-transform:none;font-weight:400">(decide si la relación se puntúa en el ítem 1 o en el 2)</span></div>
+   <div class="toggles">${PAREJA.map(([v,l])=>`<button class="tog ${m.pareja===v?"on":""}" data-v="${v}" onclick="S.meta.pareja=S.meta.pareja===this.dataset.v?'':this.dataset.v;save();render()">${l}</button>`).join("")}</div>
+   ${prev.length?`<div class="box tip"><b>Este ID tiene ${prev.length} evaluación(es) guardada(s).</b> Última: ${esc(prev[0].meta.fecha)} · MAP ${prev[0].map}/36 · EXP ${prev[0].exp}/16. En Resultado verá el cambio.</div>`:""}
+  </div>
+  <div class="card">
+   <h3>Antes de empezar</h3>
+   <ul style="margin:0;padding-left:20px;display:grid;gap:4px;font-size:15px">
+    <li><b>13 ítems, de 0 a 4.</b> Mayor puntaje = mayor déficit.</li>
+    <li><b>Ítems 1–9 (MAP):</b> motivación y placer. Se refieren a la <b>semana pasada</b>; los ítems 4, 6 y 9 preguntan por la <b>semana que viene</b>.</li>
+    <li><b>Ítems 10–13 (EXP):</b> expresión. No tienen preguntas: se puntúan al final con lo <b>observado durante toda la entrevista</b>. Obsérvelos desde el inicio.</li>
+    <li>Las relaciones amorosas se puntúan en el ítem 1 <b>o</b> en el 2, nunca en ambos.</li>
+    <li>En los ítems de frecuencia (3, 4, 6, 8, 9) cuente días o experiencias: la app sugiere el puntaje según las anclas.</li>
+   </ul>
+  </div>
+  <div class="navbtns"><span></span><button class="primary" onclick="S.mode==='rapido'?(S.view='quick',save(),render(),toTop()):goItem(ALL.find(i=>S.r[i]===undefined)||1)">${calc().done?"Continuar":"Empezar"} →</button></div>
+  ${H.length?viewHist():""}`;
+}
+function viewHist(){
+  return `<div class="card" style="margin-top:14px"><h3>Evaluaciones guardadas en este equipo</h3><div class="hist">${H.map((h,i)=>`<div class="h"><b>${esc(h.meta.id||"Sin ID")}</b><span>${esc(h.meta.fecha)} · ${esc(h.meta.tipo||"")}</span><span class="chip">MAP ${h.map} · EXP ${h.exp}</span><span class="sp"></span><button class="ghost" onclick="loadHist(${i})">Abrir</button><button class="ghost" onclick="delHist(${i})" aria-label="Eliminar">✕</button></div>`).join("")}</div>
+  <p class="muted" style="margin:8px 0 0">Solo en este navegador. Para conservarlas, descargue el CSV.</p></div>`;
+}
+function loadHist(i){if(calc().done&&!confirm("¿Reemplazar la evaluación en curso por la guardada?"))return;const h=H[i];S=Object.assign(blank(S.mode),JSON.parse(JSON.stringify(h)),{view:"res",mode:S.mode});save();render();toTop()}
+function delHist(i){if(confirm(`¿Eliminar la evaluación de ${H[i].meta.id||"Sin ID"} del ${H[i].meta.fecha}? No se puede deshacer.`)){H.splice(i,1);save();render()}}
+
+/* ---------- interview ---------- */
+function setBr(n,b){S.br[n]=S.br[n]===b?undefined:b;save();render()}
+function qList(arr,insIdx){return `<ul class="qs">${arr.map((q,i)=>`<li class="${insIdx&&insIdx.includes(i)?"ins":""}">${esc(q)}</li>`).join("")}</ul>`}
+function parejaTip(n){
+  const p=S.meta.pareja;if(n!==1&&n!==2)return "";
+  if(p==="conviviente")return `<div class="box tip"><b>Pareja:</b> convive con cónyuge o pareja → la relación se puntúa ${n===1?"<b>aquí</b>":"en el <b>ítem 1</b>, no aquí"}.</div>`;
+  if(p==="no conviviente")return `<div class="box tip"><b>Pareja:</b> relación sin convivencia → se puntúa ${n===2?"<b>aquí</b>":"en el <b>ítem 2</b>, no aquí"}.</div>`;
+  if(p==="sin pareja")return `<div class="box tip"><b>Sin pareja.</b> ${n===2?"Explore aquí el interés en relaciones románticas.":"El interés en relaciones románticas se explora en el ítem 2."}</div>`;
+  return `<div class="box warn">Situación de pareja no registrada en Datos. ${esc(ITEMS[n].note)}</div>`;
+}
+function viewItem(){
+  const n=S.cur,it=ITEMS[n],d=subOf(n),v=S.r[n],pos=d.items.indexOf(n)+1,s=sug(n);
+  const opts=it.e.map((ex,i)=>`<button class="opt ${v===i?"sel":""} ${s&&s.v===i?"sug":""}" data-v="${i}" onclick="setR(${n},${i})" aria-pressed="${v===i}"><b>${i}</b><span><strong>${ANCHOR[i]}</strong><small>${esc(ex)}</small></span></button>`).join("");
+  let body="";
+  if(it.obs){
+    body=`<div class="box tip" style="margin-top:0"><b>Cómo observar.</b> ${esc(it.obs)}</div>
+     <div class="box warn">Sin preguntas. Puntúe al terminar la entrevista, según lo observado a lo largo de toda ella.</div>`;
+  }else{
+    const b=it.br?(S.br[n]===undefined?null:S.br[n]):0;
+    body=`${n===1||n===2?parejaTip(n):""}
+     ${it.note&&n!==1&&n!==2?`<div class="box warn" style="margin-top:0"><b>Nota.</b> ${esc(it.note)}</div>`:""}
+     <div class="lbl">Introducción</div><div class="lead">${esc(it.lead)}</div>
+     ${it.open.length?`<div class="lbl">Pregunta de entrada</div>${qList(it.open,it.openIns)}`:""}
+     ${it.br?`<div class="brs" role="group" aria-label="Rama de la entrevista">${it.br.map((l,i)=>`<button class="${b===i?"on":""}" onclick="setBr(${n},${i})">${esc(l)}</button>`).join("")}</div>`:""}
+     ${b===null?`<p class="muted" style="margin:10px 0 0">Elija la rama según la respuesta para ver las preguntas que siguen.</p>`:it.g[b].map(g=>`<div class="gh">${esc(g.h)}</div>${g.note?`<div class="box warn" style="margin:0 0 8px">${esc(g.note)}</div>`:""}${qList(g.q,g.ins?g.q.map((_,i)=>i):null)}`).join("")}`;
+  }
+  return `<div class="card">
+   <div class="eyebrow">${d.name} · ${pos} de ${d.items.length} · Ítem ${n} de ${N}</div>
+   <h2>${n}. ${esc(it.t)}<span class="per">${esc(it.per)}</span></h2>
+   ${body}
+   ${helper(n)}
+   <div class="lbl">Puntuación</div>
+   <div class="opts">${opts}</div>
+   <div class="lbl">Nota del ítem <span style="text-transform:none;font-weight:400">(opcional)</span></div>
+   <textarea placeholder="Lo que dijo, ejemplos, dudas de puntuación" oninput="S.notes[${n}]=this.value;save()">${esc(S.notes[n]||"")}</textarea>
+  </div>
+  <div class="navbtns">
+   <button onclick="${n>1?`goItem(${n-1})`:`go('datos')`}">← ${n>1?"Ítem "+(n-1):"Datos"}</button>
+   <label class="chk" style="margin:0;font-size:13px"><input type="checkbox" ${S.auto?"checked":""} onchange="S.auto=this.checked;save()">Avanzar al puntuar</label>
+   <button class="primary" onclick="${n<N?`goItem(${n+1})`:`go('res')`}">${n<N?"Ítem "+(n+1):"Ver resultado"} →</button>
+  </div>
+  <p class="kbd" style="margin-top:10px"><kbd>0</kbd>–<kbd>4</kbd> puntúan · <kbd>←</kbd> <kbd>→</kbd> navegan · clic otra vez para borrar</p>`;
+}
+function setR(n,v){
+  if(S.r[n]===v){delete S.r[n];save();render();return}
+  S.r[n]=v;save();
+  if(S.view==="item"&&S.auto){render();setTimeout(()=>{const nx=ALL.find(i=>i>n&&S.r[i]===undefined)||(n<N?n+1:null);nx?goItem(nx):go("res")},200)}
+  else render();
+}
+
+/* ---------- quick ---------- */
+function viewQuick(){
+  const c=calc();
+  return `<div class="card"><div class="eyebrow">Registro rápido</div><h2>Puntúe los 13 ítems</h2>
+   <p class="what">Para transcribir una entrevista ya hecha. Toque el nombre de un ítem para ver sus preguntas y anclas en modo Entrevista.</p>
+   ${c.per.map(d=>`<div class="qgroup" id="g${d.k}"><div class="qhead"><h3 style="margin:0">${d.full}</h3><span class="sub">${d.s}/${d.max}</span></div>
+   ${d.items.map(i=>`<div class="qrow"><span class="n">${i}</span><span class="tt" onclick="S.mode='entrevista';goItem(${i})">${esc(ITEMS[i].t)} <span class="muted">· ${esc(ITEMS[i].per)}</span></span>
+     <span class="qseg">${[0,1,2,3,4].map(v=>`<button data-v="${v}" class="${S.r[i]===v?"on":""}" onclick="setR(${i},${v})" title="${ANCHOR[v]}: ${esc(ITEMS[i].e[v])}" aria-label="Ítem ${i}: ${v}">${v}</button>`).join("")}</span></div>`).join("")}</div>`).join("")}
+  </div>
+  <div class="navbtns"><button onclick="go('datos')">← Datos</button><button class="primary" onclick="go('res')">Ver resultado →</button></div>`;
+}
+
+/* ---------- results ---------- */
+function alerts(c){
+  const a=[];const miss=ALL.filter(i=>S.r[i]===undefined);
+  if(miss.length)a.push(["warn",`Faltan ${miss.length} ítems: ${miss.join(", ")}. Los puntajes están incompletos.`]);
+  if(!S.meta.pareja)a.push(["warn","Situación de pareja no registrada: confirme que la relación amorosa no se puntuó en los ítems 1 y 2 a la vez."]);
+  [3,4,6,8,9].forEach(i=>{const s=sug(i);if(s&&s.v!==null&&S.r[i]!==undefined&&S.r[i]!==s.v)a.push(["tip",`Ítem ${i}: puntuado ${S.r[i]}, pero el conteo registrado (${s.txt}) corresponde a ${s.v}. Revise.`])});
+  return a;
+}
+function prevOf(){const id=(S.meta.id||"").trim().toLowerCase();if(!id)return null;return H.filter(h=>(h.meta.id||"").trim().toLowerCase()===id&&!(h.meta.fecha===S.meta.fecha&&h.meta.tipo===S.meta.tipo)).sort((a,b)=>b.meta.fecha.localeCompare(a.meta.fecha))[0]||null}
+const dl=(a,b)=>{const x=a-b;return `<span class="delta" style="color:${x<0?"var(--s0)":x>0?"var(--s3)":"var(--muted)"}">${x>0?"+":""}${x}</span>`};
+function viewRes(){
+  const c=calc(),al=alerts(c),p=prevOf();
+  const fr=q=>q<.13?COL[0]:q<.38?COL[1]:q<.63?COL[2]:q<.88?COL[3]:COL[4];
+  return `<div class="card">
+   <div class="eyebrow">Resultado · ${esc(S.meta.id||"Sin ID")} · ${esc(S.meta.fecha)}</div>
+   <div class="hero" style="margin-top:8px">
+     <div><div class="bigl">Motivación y placer (MAP)</div><div class="big">${c.map}<small>/36</small></div>${p?`<div class="muted">antes ${p.map} · cambio ${dl(c.map,p.map)}</div>`:""}</div>
+     <div><div class="bigl">Expresión (EXP)</div><div class="big">${c.exp}<small>/16</small></div>${p?`<div class="muted">antes ${p.exp} · cambio ${dl(c.exp,p.exp)}</div>`:""}</div>
+     <div><div class="bigl">Total</div><div class="big" style="font-size:32px">${c.tot}<small>/52</small></div></div>
+   </div>
+   <p class="muted">Mayor puntaje = mayor déficit. La CAINS se interpreta por sus dos subescalas, MAP y EXP. No tiene puntos de corte de severidad validados: úsela para describir el perfil y seguir el cambio en el tiempo.</p>
+   <div class="lbl">Por subescala (% del máximo)</div>
+   ${c.per.map(d=>{const q=d.s/d.max;const pd=p?calc(p).per.find(x=>x.k===d.k).s:null;return `<div class="dbar"><span>${d.name}</span><span class="tr"><i style="width:${q*100}%;background:${fr(q)}"></i></span><span class="v">${d.s}/${d.max}${pd!==null?`<br><span class="muted" style="font-weight:400">antes ${pd}</span>`:""}</span></div>`}).join("")}
+   <div class="lbl">Ítem por ítem</div>
+   ${ALL.map(i=>{const v=S.r[i];return `<div class="irow"><span class="muted">${i}</span><span>${esc(ITEMS[i].t)}</span><span class="dot" style="background:${v===undefined?"var(--line)":COL[v]}">${v===undefined?"—":v}</span></div>`}).join("")}
+   ${al.map(([k,t])=>`<div class="box ${k}">${esc(t)}</div>`).join("")}
+  </div>
+  <div class="card">
+   <h3>Observaciones generales <span class="muted" style="font-weight:400">(opcional)</span></h3>
+   <textarea placeholder="Factores que puedan influir: síntomas positivos, depresión, efectos extrapiramidales, sedación, falta de oportunidades" oninput="S.meta.obs=this.value;save();document.getElementById('sum').textContent=summaryText()">${esc(S.meta.obs)}</textarea>
+  </div>
+  <div class="card">
+   <h3>Resumen para la historia clínica</h3>
+   <pre id="sum">${esc(summaryText())}</pre>
+   <div class="row">
+    <button class="primary" onclick="copySum(this)">Copiar resumen</button>
+    <button onclick="window.print()">Imprimir hoja</button>
+    <button onclick="dlCSV()">Descargar CSV</button>
+    <span style="flex:1"></span>
+    <button onclick="saveHist()">Guardar en historial</button>
+    <button onclick="nueva()">Nueva evaluación</button>
+   </div>
+  </div>
+  ${H.length?viewHist():""}`;
+}
+function summaryText(){
+  const c=calc(),m=S.meta,p=prevOf();
+  let t=`CAINS (Clinical Assessment Interview for Negative Symptoms) — ${m.tipo} — ${m.fecha}\n`;
+  t+=`ID: ${m.id||"—"}${m.hc?` · HC ${m.hc}`:""}${m.edad?` · ${m.edad} a`:""}${m.sexo?` · ${m.sexo}`:""}${m.dx?` · Dx ${m.dx}`:""}\n`;
+  t+=`Contexto: ${m.contexto}${m.servicio?` (${m.servicio})`:""} · Evaluador: ${m.evaluador||"—"}\n\n`;
+  t+=`MAP (motivación y placer, ítems 1–9): ${c.map}/36${c.mapDone<9?` (incompleto: ${c.mapDone}/9)`:""}\n`;
+  t+=`EXP (expresión, ítems 10–13): ${c.exp}/16${c.expDone<4?` (incompleto: ${c.expDone}/4)`:""}\n`;
+  t+=`Total: ${c.tot}/52\n`;
+  c.per.forEach(d=>{t+=`  ${d.full}: ${d.s}/${d.max}\n`});
+  if(p)t+=`Evaluación previa ${p.meta.fecha}: MAP ${p.map} → ${c.map} (${c.map-p.map>0?"+":""}${c.map-p.map}) · EXP ${p.exp} → ${c.exp} (${c.exp-p.exp>0?"+":""}${c.exp-p.exp})\n`;
+  t+=`\nÍtems: ${ALL.map(i=>`${i}:${S.r[i]===undefined?"—":S.r[i]}`).join(" ")}\n`;
+  const notas=Object.entries(S.notes).filter(([,v])=>v&&v.trim()).map(([k,v])=>`  ${k}. ${ITEMS[k].t}: ${v.trim()}`);
+  if(notas.length)t+=`\nNotas:\n${notas.join("\n")}\n`;
+  if(m.obs&&m.obs.trim())t+=`\nObservaciones: ${m.obs.trim()}\n`;
+  t+=`\nMayor puntaje = mayor déficit. Sin puntos de corte validados.\n`;
+  return t;
+}
+function copySum(btn){const t=summaryText();const ok=()=>{btn.textContent="Copiado ✓";setTimeout(()=>btn.textContent="Copiar resumen",1500)};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,()=>fallbackCopy(t,ok));else fallbackCopy(t,ok)}
+function fallbackCopy(t,ok){const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");ok()}catch(e){}ta.remove()}
+function rowOf(st){const c=calc(st),m=st.meta;return [m.id,m.hc,m.edad,m.sexo,m.dx,m.servicio,m.fecha,m.tipo,m.evaluador,m.contexto,m.pareja].concat(ALL.map(i=>st.r[i]===undefined?"":st.r[i])).concat(c.per.map(d=>d.s),[c.map,c.exp,c.tot,N-c.done])}
+function dlCSV(){
+  const h=["id","hc","edad","sexo","dx","servicio","fecha","momento","evaluador","contexto","pareja"].concat(ALL.map(i=>"cains"+i)).concat(["sub_social","sub_trabajo","sub_recreacion","sub_expresion","map","exp","total","n_faltantes"]);
+  const rows=[rowOf(S)];H.forEach(x=>{if(!(x.meta.id===S.meta.id&&x.meta.fecha===S.meta.fecha&&x.meta.tipo===S.meta.tipo))rows.push(rowOf(x))});
+  const q=x=>`"${String(x??"").replace(/"/g,'""')}"`;
+  const blob=new Blob(["﻿"+h.join(",")+"\n"+rows.map(r=>r.map(q).join(",")).join("\n")+"\n"],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`CAINS_${(S.meta.id||"sinID").replace(/\W+/g,"_")}_${S.meta.fecha}.csv`;document.body.appendChild(a);a.click();a.remove();
+}
+function snapshot(){const c=calc();return JSON.parse(JSON.stringify({meta:S.meta,r:S.r,notes:S.notes,br:S.br,hv:S.hv,map:c.map,exp:c.exp,tot:c.tot}))}
+function saveHist(){
+  const s=snapshot();const i=H.findIndex(h=>h.meta.id===s.meta.id&&h.meta.fecha===s.meta.fecha&&h.meta.tipo===s.meta.tipo);
+  if(i>=0)H[i]=s;else H.unshift(s);save();render();
+}
+function nueva(){
+  if(calc().done&&!confirm("¿Empezar una nueva evaluación? La actual se guarda en el historial."))return;
+  if(calc().done){const s=snapshot();const i=H.findIndex(h=>h.meta.id===s.meta.id&&h.meta.fecha===s.meta.fecha&&h.meta.tipo===s.meta.tipo);if(i>=0)H[i]=s;else H.unshift(s)}
+  const ev=S.meta.evaluador,mode=S.mode;S=blank(mode);S.meta.evaluador=ev;save();render();toTop();
+}
+
+/* ---------- print sheet ---------- */
+function sheet(){
+  const c=calc(),m=S.meta;
+  const rows=SUBS.map(d=>`<tr class="dh"><td colspan="3">${d.full}</td><td style="text-align:center">${c.per.find(x=>x.k===d.k).s} / ${d.max}</td></tr>`+d.items.map(i=>`<tr><td style="width:28px;text-align:center">${i}</td><td>${esc(ITEMS[i].t)}${S.notes[i]&&S.notes[i].trim()?`<br><i style="font-size:8.5pt">${esc(S.notes[i].trim())}</i>`:""}</td><td style="width:90px;font-size:8.5pt">${esc(ITEMS[i].per)}</td><td style="width:70px;text-align:center"><b>${S.r[i]===undefined?"":S.r[i]}</b></td></tr>`).join("")).join("");
+  const al=alerts(c).filter(([,x])=>!x.startsWith("Faltan"));
+  document.getElementById("sheet").innerHTML=`
+   <div class="ph"><div class="seal">CAINS</div><div><b>Institución:</b> ______________________________<br><b>Servicio:</b> ______________________________</div></div>
+   <h1>Entrevista de evaluación clínica de los síntomas negativos (CAINS)</h1>
+   <div class="sub">Hoja de registro · ${esc(m.tipo)}</div>
+   <table class="meta"><tr><td><b>ID:</b> ${esc(m.id)}</td><td><b>HC:</b> ${esc(m.hc)}</td><td><b>Edad:</b> ${esc(m.edad)}</td><td><b>Sexo:</b> ${esc(m.sexo)}</td></tr>
+   <tr><td><b>Dx:</b> ${esc(m.dx)}</td><td><b>Servicio:</b> ${esc(m.servicio)}</td><td><b>Contexto:</b> ${esc(m.contexto)}</td><td><b>Fecha:</b> ${esc(m.fecha)}</td></tr></table>
+   <p style="font-size:8.5pt;margin:6px 0">0 = sin deterioro · 1 = déficit leve · 2 = moderado · 3 = moderadamente grave · 4 = severo</p>
+   <table><tr><th>N.º</th><th>Ítem</th><th>Periodo</th><th style="text-align:center">Puntaje</th></tr>${rows}
+   <tr class="dh"><td colspan="3">MAP · motivación y placer (ítems 1–9, 0–36)</td><td style="text-align:center">${c.map}</td></tr>
+   <tr class="dh"><td colspan="3">EXP · expresión (ítems 10–13, 0–16)</td><td style="text-align:center">${c.exp}</td></tr>
+   <tr class="dh"><td colspan="3">Total (0–52)</td><td style="text-align:center">${c.tot}</td></tr></table>
+   ${al.length?`<p style="margin:6px 0 0"><b>Observaciones de puntuación:</b><br>${al.map(([,x])=>"• "+esc(x)).join("<br>")}</p>`:""}
+   ${m.obs&&m.obs.trim()?`<p style="margin:6px 0 0"><b>Observaciones:</b> ${esc(m.obs)}</p>`:""}
+   <div class="sig"><div>Firma y sello del evaluador<br>${esc(m.evaluador)}</div><div>Fecha</div></div>
+   <p class="note">Herramienta de apoyo clínico de acceso abierto. No reemplaza el manual de la CAINS (Kring et al., 2013). Mayor puntaje = mayor déficit; sin puntos de corte validados.</p>`;
+}
+
+/* ---------- render ---------- */
+function render(){
+  if(S.view==="item"&&S.mode==="rapido")S.view="quick";
+  if(S.view==="quick"&&S.mode==="entrevista")S.view="item";
+  if(!ITEMS[S.cur])S.cur=1;
+  renderStatus();side();sheet();
+  const M=document.getElementById("main");
+  M.innerHTML=S.view==="datos"?viewDatos():S.view==="res"?viewRes():S.view==="quick"?viewQuick():viewItem();
+}
+document.addEventListener("keydown",e=>{
+  if(S.view!=="item"||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.metaKey||e.ctrlKey||e.altKey)return;
+  if(/^[0-4]$/.test(e.key))setR(S.cur,+e.key);
+  else if(e.key==="ArrowRight")S.cur<N?goItem(S.cur+1):go("res");
+  else if(e.key==="ArrowLeft")S.cur>1?goItem(S.cur-1):go("datos");
+});
+render();
+</script>
+</body>
+</html>
